@@ -1,20 +1,16 @@
-from py2neo.ogm import GraphObject, RelatedTo, Property, RelatedFrom
+from dataclasses import dataclass
+
+from py2neo.ogm import GraphObject, RelatedTo, Property, Label
 
 from blitzcrank.access.neo4j.Champion import ChampionNode
-from blitzcrank.access.neo4j.Incarnation import IncarnationNode
+from blitzcrank.access.neo4j.Event import EventNode
 from blitzcrank.access.neo4j.Item import ItemNode
+from blitzcrank.access.neo4j.Position import PositionNode
 from blitzcrank.domain.Participant import Participant
 from blitzcrank.domain.TimeFrame import ParticipantTimeFrame
 
 
-class PositionNode(object):
-    pass
-
-
-class EventNode(object):
-    pass
-
-
+@dataclass
 class TimeFrameNode(ParticipantTimeFrame, GraphObject):
     __primarykey__ = "timeframe_id"
     __primarylabel__ = "TIMEFRAME"
@@ -27,12 +23,15 @@ class TimeFrameNode(ParticipantTimeFrame, GraphObject):
     position = RelatedTo(PositionNode, "AT")
     events = RelatedTo(EventNode, "OCCURRED")
 
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+
+
 class ParticipantNode(Participant, GraphObject):
     __primarykey__ = 'participant_id'
 
     participant_id = Property()
-    riot_participant_id = Property
-    incarnation = RelatedFrom(IncarnationNode, "IS_AN")
+    riot_participant_id = Property()
 
     items = RelatedTo(ItemNode, "BOUGHT")
     champion = RelatedTo(ChampionNode, "PLAYED")
@@ -105,4 +104,7 @@ class ParticipantNode(Participant, GraphObject):
     gold_earned = Property()
     gold_spent = Property()
 
-    win: bool # TODO: maybe move this to the relationship between participant and match, plus let it be a Label?
+    win: Label() # TODO: maybe move this to the relationship between participant and match, plus let it be a Label?
+
+    def __init__(self, participant_id: int):
+        self.participant_id = participant_id
