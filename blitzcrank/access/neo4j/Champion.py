@@ -9,3 +9,6 @@ class ChampionNode(Champion, GraphObject):
     __primarykey__ = 'champion_id'
     __primarylabel__ = 'CHAMPION'
 
+    def __init__(self, champ_id: int, name: str) -> None:
+        self.champion_id = champ_id
+        self.name = name

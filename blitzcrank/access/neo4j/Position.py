@@ -1,7 +1,9 @@
 from py2neo.ogm import GraphObject, Property
 
+from blitzcrank.domain.Position import Position
 
-class Position(GraphObject):
+
+class PositionNode(Position, GraphObject):
     __primarykey__ = 'position_id'
 
     position_id = Property()
